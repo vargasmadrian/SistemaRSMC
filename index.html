@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema RSMC — Automatización de Seguimiento Microcurricular</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --slate-50: #f8fafc;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-300: #cbd5e1;
+      --slate-400: #94a3b8;
+      --slate-500: #64748b;
+      --slate-600: #475569;
+      --slate-700: #334155;
+      --slate-800: #1e293b;
+      --slate-900: #0f172a;
+      --blue-500: #3b82f6;
+      --blue-600: #2563eb;
+      --blue-700: #1d4ed8;
+      --blue-800: #1e40af;
+      --blue-900: #1e3a8a;
+      --emerald-500: #10b981;
+      --emerald-600: #059669;
+      --amber-500: #f59e0b;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: var(--slate-800);
+      background: var(--slate-50);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---- Layout ---- */
+    .container { max-width: 860px; margin: 0 auto; padding: 0 1.25rem; }
+
+    /* ---- Hero ---- */
+    .hero {
+      background: linear-gradient(135deg, var(--slate-900), var(--blue-900));
+      color: #fff;
+      text-align: center;
+      padding: 5rem 1.25rem 4rem;
+    }
+    .hero h1 { font-size: 2.75rem; font-weight: 800; letter-spacing: -0.02em; }
+    .hero .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 9999px;
+      padding: 0.25rem 1rem;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+    .hero p {
+      max-width: 600px;
+      margin: 1rem auto 0;
+      font-size: 1.15rem;
+      color: var(--slate-300);
+    }
+
+    /* ---- Sections ---- */
+    section { padding: 3.5rem 0; }
+    section:nth-child(even) { background: var(--slate-100); }
+
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--slate-900);
+      margin-bottom: 1.5rem;
+    }
+    .section-title span { color: var(--blue-600); }
+
+    /* ---- Que hace ---- */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+      margin-top: 1.5rem;
+    }
+    .feature-card {
+      background: #fff;
+      border: 1px solid var(--slate-200);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+    }
+    .feature-card .icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      margin-bottom: 0.75rem;
+    }
+    .icon-blue { background: rgba(59,130,246,0.1); color: var(--blue-600); }
+    .icon-emerald { background: rgba(16,185,129,0.1); color: var(--emerald-600); }
+    .icon-amber { background: rgba(245,158,11,0.1); color: var(--amber-500); }
+    .feature-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.35rem; }
+    .feature-card p { font-size: 0.9rem; color: var(--slate-600); }
+
+    /* ---- Download ---- */
+    .download-section { text-align: center; }
+    .btn-download {
+      display: inline-block;
+      background: var(--blue-600);
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 600;
+      padding: 0.9rem 2.5rem;
+      border-radius: 0.625rem;
+      text-decoration: none;
+      transition: background 0.2s;
+      margin-top: 0.5rem;
+    }
+    .btn-download:hover { background: var(--blue-700); }
+    .download-note {
+      margin-top: 0.75rem;
+      font-size: 0.85rem;
+      color: var(--slate-500);
+    }
+
+    /* ---- Steps ---- */
+    .steps { list-style: none; counter-reset: step; margin-top: 1.25rem; }
+    .steps li {
+      counter-increment: step;
+      position: relative;
+      padding-left: 3rem;
+      margin-bottom: 1.25rem;
+    }
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 2rem;
+      height: 2rem;
+      background: var(--blue-600);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+    .steps li strong { display: block; font-size: 0.95rem; }
+    .steps li span { font-size: 0.875rem; color: var(--slate-600); }
+    .steps code {
+      background: var(--slate-200);
+      padding: 0.1rem 0.4rem;
+      border-radius: 0.25rem;
+      font-size: 0.85rem;
+    }
+
+    /* ---- Check list ---- */
+    .checklist { list-style: none; margin-top: 1.25rem; }
+    .checklist li {
+      position: relative;
+      padding-left: 1.75rem;
+      margin-bottom: 0.85rem;
+      font-size: 0.95rem;
+    }
+    .checklist li::before {
+      content: "\2713";
+      position: absolute;
+      left: 0;
+      color: var(--emerald-500);
+      font-weight: 700;
+    }
+
+    /* ---- Links ---- */
+    a.inline-link {
+      color: var(--blue-600);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    a.inline-link:hover { color: var(--blue-800); }
+
+    /* ---- Footer ---- */
+    footer {
+      background: var(--slate-900);
+      color: var(--slate-400);
+      text-align: center;
+      padding: 2rem 1.25rem;
+      font-size: 0.85rem;
+    }
+    footer strong { color: var(--slate-200); }
+
+    /* ---- Responsive ---- */
+    @media (max-width: 640px) {
+      .hero h1 { font-size: 2rem; }
+      .hero p { font-size: 1rem; }
+      .section-title { font-size: 1.4rem; }
+      .feature-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="badge">Extensi&oacute;n de Chrome</div>
+    <h1>Sistema RSMC</h1>
+    <p>Automatiza el registro de seguimiento microcurricular en Banner con inteligencia artificial. Extrae datos del syllabus en PDF y completa los formularios por ti.</p>
+  </header>
+
+  <!-- Que hace -->
+  <section>
+    <div class="container">
+      <h2 class="section-title"><span>&iquest;Qu&eacute; hace?</span></h2>
+      <p>El Sistema RSMC es una extensi&oacute;n de Chrome que conecta la inteligencia artificial con el sistema Banner para simplificar el proceso de seguimiento microcurricular.</p>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="icon icon-blue">&#128196;</div>
+          <h3>Extrae datos del PDF</h3>
+          <p>Sube el syllabus en PDF y la IA extrae autom&aacute;ticamente la metodolog&iacute;a, evaluaci&oacute;n y resultados de aprendizaje de cada unidad.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon icon-emerald">&#9998;</div>
+          <h3>Revisa y edita</h3>
+          <p>Antes de inyectar, puedes revisar y corregir los datos extra&iacute;dos en una tabla interactiva dentro de la extensi&oacute;n.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon icon-amber">&#9889;</div>
+          <h3>Autocompleta Banner</h3>
+          <p>Con un clic, los datos se inyectan directamente en los formularios de Banner, ahorrando horas de trabajo manual.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Descargar -->
+  <section>
+    <div class="container download-section">
+      <h2 class="section-title">Descargar <span>Extensi&oacute;n</span></h2>
+      <p>Descarga el archivo ZIP con la &uacute;ltima versi&oacute;n de la extensi&oacute;n e inst&aacute;lala manualmente en Chrome.</p>
+      <a href="rsmc-extension.zip" class="btn-download">Descargar RSMC (.zip)</a>
+      <p class="download-note">Compatible con Google Chrome y navegadores basados en Chromium.</p>
+    </div>
+  </section>
+
+  <!-- Instalacion -->
+  <section>
+    <div class="container">
+      <h2 class="section-title"><span>Instalaci&oacute;n</span></h2>
+      <p>Sigue estos pasos para instalar la extensi&oacute;n desde el archivo ZIP:</p>
+
+      <ol class="steps">
+        <li>
+          <strong>Descarga el archivo ZIP</strong>
+          <span>Haz clic en el bot&oacute;n de descarga de la secci&oacute;n anterior.</span>
+        </li>
+        <li>
+          <strong>Extrae el contenido</strong>
+          <span>Descomprime el ZIP en una carpeta de tu computadora. Recuerda la ubicaci&oacute;n.</span>
+        </li>
+        <li>
+          <strong>Abre las extensiones de Chrome</strong>
+          <span>Escribe <code>chrome://extensions</code> en la barra de direcciones y presiona Enter.</span>
+        </li>
+        <li>
+          <strong>Activa el Modo Desarrollador</strong>
+          <span>En la esquina superior derecha de la p&aacute;gina, activa el interruptor &ldquo;Modo de desarrollador&rdquo;.</span>
+        </li>
+        <li>
+          <strong>Carga la extensi&oacute;n</strong>
+          <span>Haz clic en &ldquo;Cargar descomprimida&rdquo; y selecciona la carpeta que extrajiste en el paso 2.</span>
+        </li>
+        <li>
+          <strong>Fija la extensi&oacute;n</strong>
+          <span>Haz clic en el &iacute;cono de rompecabezas en la barra de herramientas de Chrome y fija &ldquo;RSMC&rdquo; para acceder r&aacute;pidamente.</span>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Como usar -->
+  <section>
+    <div class="container">
+      <h2 class="section-title"><span>&iquest;C&oacute;mo usar?</span></h2>
+      <p>Una vez instalada la extensi&oacute;n, sigue estos pasos para completar el seguimiento microcurricular:</p>
+
+      <ol class="steps">
+        <li>
+          <strong>Abre Banner en la p&aacute;gina del syllabus</strong>
+          <span>Navega hasta el formulario <code>SZKSYLL</code> en Banner y abre la materia que deseas completar.</span>
+        </li>
+        <li>
+          <strong>Abre la extensi&oacute;n RSMC</strong>
+          <span>Haz clic en el &iacute;cono de RSMC en la barra de herramientas de Chrome.</span>
+        </li>
+        <li>
+          <strong>Selecciona el modelo de IA</strong>
+          <span>Elige el modelo a utilizar. Se recomienda <strong>Gemini</strong> por ser gratuito y ofrecer buenos resultados.</span>
+        </li>
+        <li>
+          <strong>Ingresa tu API Key</strong>
+          <span>Obt&eacute;n una clave de API gratuita desde
+            <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" class="inline-link">Google AI Studio</a> (para Gemini) o desde
+            <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener" class="inline-link">OpenAI</a> (para GPT).
+          </span>
+        </li>
+        <li>
+          <strong>Sube el syllabus en PDF</strong>
+          <span>Selecciona el archivo PDF del syllabus de la materia. La IA lo procesar&aacute; y extraer&aacute; los datos autom&aacute;ticamente.</span>
+        </li>
+        <li>
+          <strong>Revisa y edita los datos</strong>
+          <span>Verifica la tabla con los datos extra&iacute;dos. Puedes corregir cualquier campo antes de continuar.</span>
+        </li>
+        <li>
+          <strong>Haz clic en &ldquo;Inyectar en Banner&rdquo;</strong>
+          <span>Los datos se insertar&aacute;n autom&aacute;ticamente en los campos del formulario de Banner.</span>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Que revisar -->
+  <section>
+    <div class="container">
+      <h2 class="section-title"><span>&iquest;Qu&eacute; revisar en Banner?</span></h2>
+      <p>Despu&eacute;s de inyectar los datos, verifica lo siguiente en el formulario de Banner para asegurar que todo qued&oacute; correcto:</p>
+
+      <ul class="checklist">
+        <li><strong>Metodolog&iacute;a:</strong> Cada unidad debe tener las entradas correctas de metodolog&iacute;a con sus respectivas horas. Aseg&uacute;rate de que cada unidad tenga al menos 2 tipos diferentes (CD, APE, TA).</li>
+        <li><strong>Evaluaci&oacute;n:</strong> Las descripciones de evaluaci&oacute;n deben coincidir con lo especificado en el syllabus para cada unidad.</li>
+        <li><strong>Resultados de Aprendizaje:</strong> Verifica que los resultados de aprendizaje est&eacute;n vinculados correctamente a cada unidad y correspondan con el syllabus.</li>
+        <li><strong>Tipos de metodolog&iacute;a:</strong> Confirma que cada unidad tenga al menos 2 tipos distintos entre Componente Docente (CD), Aprendizaje Pr&aacute;ctico Experimental (APE) y Trabajo Aut&oacute;nomo (TA).</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p><strong>Sistema RSMC</strong> &mdash; Registro de Seguimiento Microcurricular</p>
+    <p style="margin-top: 0.35rem;">Desarrollado para agilizar el proceso acad&eacute;mico en Banner.</p>
+  </footer>
+
+</body>
+</html>
